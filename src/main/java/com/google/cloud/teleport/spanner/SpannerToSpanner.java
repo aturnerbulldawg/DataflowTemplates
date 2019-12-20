@@ -102,6 +102,8 @@ public class SpannerToSpanner {
     public static void main(String[] args) {
         Options options = PipelineOptionsFactory.fromArgs(args).withValidation().as(Options.class);
         Pipeline p = Pipeline.create(options);
+        Integer numberOfShards = options.getNumberOfShards();
+        String destinationTable = options.getDestinationTable();
 
         p.apply("ReadFromSpannerSource",
             SpannerIO.read()
@@ -111,8 +113,7 @@ public class SpannerToSpanner {
                     .withQuery("SELECT UUID, Data, SortingKey, Timestamp FROM " + options.getSourceTable()))
             //Mutate data into destination schema, adding shardId to decrease hotspots
             .apply("MutateToDestinationSchema", ParDo.of(new DoFn<Struct, Mutation>() {
-                Integer numberOfShards = options.getNumberOfShards();
-                String destinationTable = options.getDestinationTable();
+
                 @ProcessElement
                 public void processElement(ProcessContext c) {
                     Struct currentRecord = c.element();
