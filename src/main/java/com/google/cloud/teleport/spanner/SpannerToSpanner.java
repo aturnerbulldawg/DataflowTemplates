@@ -33,31 +33,37 @@ public class SpannerToSpanner {
     /** Options for {@link TextImportPipeline}. */
     public interface Options extends PipelineOptions {
         @Description("Source Project ID of GCP Project")
+        @Validation.Required
         ValueProvider<String> getSourceProjectId();
 
         void setSourceProjectId(ValueProvider<String> value);
 
         @Description("Destination Project ID of GCP Project")
+        @Validation.Required
         ValueProvider<String> getDestinationProjectId();
 
         void setDestinationProjectId(ValueProvider<String> value);
 
         @Description("Instance ID to write to Spanner")
+        @Validation.Required
         ValueProvider<String> getSourceInstanceId();
 
         void setSourceInstanceId(ValueProvider<String> value);
 
         @Description("Database ID to write to Spanner")
+        @Validation.Required
         ValueProvider<String> getSourceDatabaseId();
 
         void setSourceDatabaseId(ValueProvider<String> value);
 
         @Description("Instance ID to write to Spanner")
+        @Validation.Required
         ValueProvider<String> getDestinationInstanceId();
 
         void setDestinationInstanceId(ValueProvider<String> value);
 
         @Description("Database ID to write to Spanner")
+        @Validation.Required
         ValueProvider<String> getDestinationDatabaseId();
 
         void setDestinationDatabaseId(ValueProvider<String> value);
