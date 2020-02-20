@@ -26,7 +26,7 @@ import com.google.cloud.spanner.Struct;
 import org.apache.beam.sdk.io.gcp.spanner.SpannerIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import com.google.cloud.spanner.Mutation;
-
+import org.apache.beam.sdk.PipelineResult;
 public class SpannerToSpanner {
     private static final Logger LOG = LoggerFactory.getLogger(SpannerToSpanner.class);
 
@@ -106,7 +106,7 @@ public class SpannerToSpanner {
         String destinationTable = options.getDestinationTable();
 
         p.apply("ReadFromSpannerSource",
-            SpannerIO.read()
+            SpannerIO.read
                     .withProjectId(options.getSourceProjectId())
                     .withInstanceId(options.getSourceInstanceId())
                     .withDatabaseId(options.getSourceDatabaseId())
@@ -135,5 +135,14 @@ public class SpannerToSpanner {
                     .withProjectId(options.getDestinationProjectId())
                     .withInstanceId(options.getDestinationInstanceId())
                     .withDatabaseId(options.getDestinationDatabaseId()));
+
+        PipelineResult result = p.run();
+        if (options.getWaitUntilFinish()
+                &&
+                /* Only if template location is null, there is a dataflow job to wait for. Otherwise it's
+                 * template generation, which doesn't start a dataflow job.
+                 */
+                options.as(DataflowPipelineOptions.class).getTemplateLocation() == null) {
+            result.waitUntilFinish();
     }
 }
